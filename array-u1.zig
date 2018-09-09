@@ -36,6 +36,11 @@ pub fn ArrayU1(comptime min_num_bits: usize) type {
             return ary;
         }
 
+        /// Read a bit as bool
+        pub fn b(pSelf: *Self, bit_offset: usize) bool {
+            return pSelf.r(bit_offset) == 1;
+        }
+
         /// Read a bit
         pub fn r(pSelf: *Self, bit_offset: usize) usize {
             if (bit_offset >= num_bits) return 0;
@@ -58,6 +63,20 @@ pub fn ArrayU1(comptime min_num_bits: usize) type {
             }
         }
     };
+}
+
+test "ArrayU1.basic" {
+    var a = ArrayU1(1).init();
+    assert(a.r(0) == 0);
+    a.w(0, 1);
+    assert(a.r(0) == 1);
+}
+
+test "ArrayU1.bool" {
+    var a = ArrayU1(1).init();
+    assert(!a.b(0));
+    a.w(0, 1);
+    assert(a.b(0));
 }
 
 test "ArrayU1.test.init.all.0" {
