@@ -6,19 +6,19 @@ const warn = debug.warn;
 
 /// Array of u1, typically for maximum performance min_num_bits == 2^n in size
 pub fn ArrayU1(comptime min_num_bits: usize) type {
-    const BitIdx = switch (@sizeOf(usize)) {
+    const UsizeIdx = switch (@sizeOf(usize)) {
         4 => u5,
         8 => u6,
-        else => @compileError("Currently only 4 and 8 byte usize supported for BitIdx\n"),
+        else => @compileError("Currently only 4 and 8 byte usize supported for UsizeIdx\n"),
     };
 
-    const bits_per_elem = @sizeOf(usize) * 8;
-    const num_elems = (min_num_bits + (bits_per_elem - 1)) / bits_per_elem;
+    const usize_bit_count = @sizeOf(usize) * 8;
+    const usize_count = (min_num_bits + (usize_bit_count - 1)) / usize_bit_count;
 
     return struct {
         const Self = this;
-        const Bits = [num_elems]usize;
-        const num_bits = @sizeOf(Bits) * bits_per_elem;
+        const Bits = [usize_count]usize;
+        const num_bits = @sizeOf(Bits) * usize_bit_count;
 
         len: usize,
         bits: Bits,
@@ -44,22 +44,22 @@ pub fn ArrayU1(comptime min_num_bits: usize) type {
         /// Read a bit
         pub fn r(pSelf: *Self, bit_offset: usize) usize {
             if (bit_offset >= num_bits) return 0;
-            var elem_idx = bit_offset / bits_per_elem;
-            var bit_idx: BitIdx = @intCast(BitIdx, bit_offset % bits_per_elem);
-            var bit = (pSelf.bits[elem_idx] & ((usize(1) << bit_idx))) != 0;
+            var usize_idx = bit_offset / usize_bit_count;
+            var bit_idx: UsizeIdx = @intCast(UsizeIdx, bit_offset % usize_bit_count);
+            var bit = (pSelf.bits[usize_idx] & ((usize(1) << bit_idx))) != 0;
             return if (bit) usize(1) else usize(0);
         }
 
         /// Write a bit
         pub fn w(pSelf: *Self, bit_offset: usize, val: usize) void {
             if (bit_offset >= num_bits) return;
-            var elem_idx = bit_offset / bits_per_elem;
-            var bit_idx: BitIdx = @intCast(BitIdx, bit_offset % bits_per_elem);
+            var usize_idx = bit_offset / usize_bit_count;
+            var bit_idx: UsizeIdx = @intCast(UsizeIdx, bit_offset % usize_bit_count);
             var bit_mask: usize = usize(1) << bit_idx;
             if (val == 0) {
-                pSelf.bits[elem_idx] &= ~bit_mask;
+                pSelf.bits[usize_idx] &= ~bit_mask;
             } else {
-                pSelf.bits[elem_idx] |= bit_mask;
+                pSelf.bits[usize_idx] |= bit_mask;
             }
         }
     };
