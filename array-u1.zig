@@ -16,7 +16,7 @@ pub fn ArrayU1(comptime min_num_bits: usize) type {
     const usize_count = (min_num_bits + (usize_bit_count - 1)) / usize_bit_count;
 
     return struct {
-        const Self = this;
+        const Self = @This();
         const Bits = [usize_count]usize;
         const num_bits = @sizeOf(Bits) * usize_bit_count;
 
