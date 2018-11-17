@@ -25,7 +25,7 @@ pub fn ArrayU1(comptime min_num_bits: usize) type {
 
         // Initialize the struct to 0 and return it
         pub fn init() Self {
-            var ary = Self {
+            var ary = Self{
                 .len = min_num_bits,
                 .bits = undefined,
             };
@@ -81,7 +81,7 @@ test "ArrayU1.bool" {
 
 test "ArrayU1.test.init.all.0" {
     var a1 = ArrayU1(1).init();
-    var bit : usize = 0;
+    var bit: usize = 0;
     while (bit < a1.len) : (bit += 1) {
         assert(a1.r(bit) == 0);
     }
@@ -136,7 +136,6 @@ test "ArrayU1.test.walking_1" {
 }
 
 test "ArrayU1.test.random" {
-    
     var bit0_off: usize = 0;
     var bit0_on: usize = 0;
     var bit1_off: usize = 0;
